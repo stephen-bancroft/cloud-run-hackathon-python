@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 moves = ['F', 'T', 'L', 'R']
+FILENAME = 'move.txt'
 
 @app.route("/", methods=['GET'])
 def index():
@@ -38,7 +39,21 @@ def move():
     request.get_data()
     logger.info(request.json)
     #return moves[random.randrange(len(moves))]
-    return ('F')
+    try:
+      with open(FILENAME) as f:
+        lines = f.read()
+      if lines == 'R':
+        MOVE = 'T'
+      if lines == 'T':
+        MOVE = 'R'
+    except IOError: 
+        MOVE = 'T'
+
+    filehandle = open(FILENAME, 'w')
+    filehandle.write(MOVE)
+    filehandle.close()
+    return (MOVE)
+    
 
 if __name__ == "__main__":
   app.run(debug=False,host='0.0.0.0',port=int(os.environ.get('PORT', 8080)))
