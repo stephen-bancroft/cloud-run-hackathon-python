@@ -21,6 +21,8 @@
 import os
 import logging
 import random
+import json
+import sys
 from flask import Flask, request
 
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -29,6 +31,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 moves = ['F', 'T', 'L', 'R']
 FILENAME = 'move.txt'
+API = 'https://cloud-run-hackathon-python-hjvbqrp67q-uc.a.run.app'
 
 @app.route("/", methods=['GET'])
 def index():
@@ -39,6 +42,12 @@ def move():
     request.get_data()
     logger.info(request.json)
     #return moves[random.randrange(len(moves))]
+    
+    # Get my position on the grid
+    X = request.json["arena"]["state"][API]['x']
+    Y = request.json["arena"]["state"][API]['y']
+    DIR = request.json["arena"]["state"][API]['direction']
+    
     try:
       with open(FILENAME) as f:
         lines = f.read()
